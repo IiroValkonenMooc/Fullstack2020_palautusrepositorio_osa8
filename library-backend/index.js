@@ -154,7 +154,7 @@ const resolvers = {
           }
         )
       }
-      console.log('authorsWithBookCount :>> ', authorsWithBookCount);
+      console.log('authorsWithBookCount :>> ', authorsWithBookCount)
       return authorsWithBookCount
     }
   },
