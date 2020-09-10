@@ -1,11 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useQuery } from '@apollo/client';
+import { ALL_BOOKS } from '../graphql/queries';
 
 const Books = (props) => {
-  if (!props.show) {
+  const [books, setBooks] = useState([])
+  const { loading, error, data } = useQuery(ALL_BOOKS)
+
+  if (!props.show||loading) {
     return null
   }
 
-  const books = []
+  if(books!==data.allBooks){
+    console.log('data.allBooks :>> ', data.allBooks);
+    setBooks(data.allBooks)
+  }
 
   return (
     <div>

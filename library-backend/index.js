@@ -111,7 +111,7 @@ const typeDefs = gql`
       title: String!,
       author: String!,
       published: Int!,
-      genres: [String!]!
+      genres: [String]!
     ): Book
 
     editAuthor(
@@ -154,12 +154,13 @@ const resolvers = {
           }
         )
       }
-      console.log('authorsWithBookCount :>> ', authorsWithBookCount)
+
       return authorsWithBookCount
     }
   },
   Mutation: {
     addBook: (root, args) => {
+      console.log('mutation args :>> ', args)
       books = [...books, { ...args } ]
 
       let authorNames = []
@@ -173,9 +174,6 @@ const resolvers = {
         ]
       }
 
-      console.log('authors :>> ', authors)
-      console.log('books :>> ', books)
-
       return args
     },
     editAuthor: (root, args) => {
@@ -187,7 +185,6 @@ const resolvers = {
         foundAuthor.born=args.setBornTo
       }
 
-      console.log('authors :>> ', authors)
       return foundAuthor
     }
   }
