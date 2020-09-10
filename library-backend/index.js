@@ -1,4 +1,15 @@
 const { ApolloServer, gql } = require('apollo-server')
+const mongoose = require('mongoose')
+require('dotenv').config()
+
+// eslint-disable-next-line no-undef
+mongoose.connect( process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
 
 let authors = [
   {
@@ -25,11 +36,6 @@ let authors = [
     id: 'afa5b6f3-344d-11e9-a414-719c6709cf3e',
   },
 ]
-
-/*
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
-*/
 
 let books = [
   {
@@ -85,11 +91,11 @@ let books = [
 
 const typeDefs = gql`
   type Book { 
-    title: String!,
-    published: Int!,
-    author: String!,
-    id: ID!,
-    genres: [String]
+    title: String!
+    published: Int!
+    author: Author!
+    genres: [String!]!
+    id: ID!
   }
 
   type Author { 
