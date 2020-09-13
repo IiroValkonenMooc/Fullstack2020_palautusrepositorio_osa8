@@ -15,7 +15,7 @@ const Authors = (props) => {
     return null
   }
 
-  if(authors!==data.allAuthors){
+  if(data && authors!==data.allAuthors){
     console.log('data.allAuthors :>> ', data.allAuthors);
     setAuthors(data.allAuthors)
   }
@@ -41,7 +41,7 @@ const Authors = (props) => {
             </th>
           </tr>
           {authors.map(a =>
-            <tr key={a.name}>
+            <tr key={a.id}>
               <td>{a.name}</td>
               <td>{a.born}</td>
               <td>{a.bookCount}</td>
@@ -64,7 +64,7 @@ const Authors = (props) => {
             value={authorNameField}
             onChange={({ target }) => setAuthorNameField(target.value)}
           >
-            {authors.map(author => <option value={author.name}>{author.name}</option>)}
+            {authors.map(author => <option key={author.id} value={author.name}>{author.name}</option>)}
           </select>
         </div>
         <div>
