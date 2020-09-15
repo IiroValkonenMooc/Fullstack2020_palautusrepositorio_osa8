@@ -20,7 +20,7 @@ const resolvers = {
         const filtered = found.filter(book => {
           if (book.author.name === args.author) {
             return true
-          } else if (args.genre && book.getMaxListeners.includes(args.genre)) {
+          } else if (args.genre && book.genres.includes(args.genre)) {
             return true
           } else {
             return false

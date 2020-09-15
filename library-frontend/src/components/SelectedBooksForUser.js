@@ -17,7 +17,7 @@ const SelectedBooksForUser = ({me, books}) => {
     return(
     <div>
         <h3>Books selected for you {me.username}</h3>
-        {stuffToShow.map(book => <div>{`${book.title} by ${book.author.name} (${book.published})`}</div>)}
+        {stuffToShow.map(book => <div key={book.id} >{`${book.title} by ${book.author.name} (${book.published})`}</div>)}
     </div>
     )
 }

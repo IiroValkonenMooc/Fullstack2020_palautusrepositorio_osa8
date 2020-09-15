@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import SelectedBooksForUser from './SelectedBooksForUser';
 import { useQuery, useLazyQuery } from '@apollo/client';
-import { ALL_BOOKS, ME } from '../graphql/queries';
+import { ALL_BOOKS, ME, ALL_BOOKS_IN_GENRE } from '../graphql/queries';
 
 const Books = (props) => {
   const [books, setBooks] = useState([])
+  const [booksInGenre, setBooksInGenre] = useState([])
   const [me, setMe] = useState([])
   const { loading, error, data } = useQuery(ALL_BOOKS)
   const [getMe, { loading: loadingMe, data: dataMe }] = useLazyQuery(ME)
+  const [getBooksInGenre, { loading: loadingBooksInGenre, data: dataBooksInGenre }] = useLazyQuery(ALL_BOOKS_IN_GENRE, { variables: { genre: 'tylsä' }} )
   const [bookGenres, setBookGenres] = useState([])
   const [bookGenresFilter, setBookGenresFilter] = useState('all')
 
@@ -16,12 +18,18 @@ const Books = (props) => {
       getMe()
     } else {
       setMe(null)
+      setBooksInGenre(null)
     }
   }, [props.token])
 
   if (!me && dataMe) {
     const { __typename, ...rest } = dataMe.me
     setMe(rest)
+    getBooksInGenre()
+  }
+
+  if (!booksInGenre && dataBooksInGenre) {
+    console.log(dataBooksInGenre);
   }
 
   if (!props.show||loading) {
