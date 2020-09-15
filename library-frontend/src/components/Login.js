@@ -42,6 +42,7 @@ const Login = ({setToken}) => {
     }, [result.data, setToken])
 
     if(!loggedIn && localStorage.getItem('library-user-token')){
+        setToken(localStorage.getItem('library-user-token'))
         setLoggedIn(true)
     }
 

@@ -25,6 +25,9 @@ const Authors = (props) => {
 
     changeBirthyear({ variables: { name: authorNameField, birthyear: authorBirthyearField} })
   }
+
+  const displayValue = props.token ? '' : 'none'
+  console.log('props.token :>> ', props.token);
   
   return (
     <div>
@@ -49,7 +52,7 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-      <form onSubmit={updateAuhor}>
+      <form onSubmit={updateAuhor} style={{ display: displayValue }} >
         <h2>Set birthyear</h2>
         {/* <div>
           {'name'}
@@ -67,18 +70,20 @@ const Authors = (props) => {
             {authors.map(author => <option key={author.id} value={author.name}>{author.name}</option>)}
           </select>
         </div>
-        <div>
-          {'birthyear'}
-          <input
-            type='number'
-            value={authorBirthyearField}
-            onChange={({ target }) => setAuthorBirthyearField(Number(target.value))}
-          />
-        </div>
-        <div>
-          <button type="submit" >
-            update author
+        
+          <div>
+            {'birthyear'}
+            <input
+              type='number'
+              value={authorBirthyearField}
+              onChange={({ target }) => setAuthorBirthyearField(Number(target.value))}
+            />
+          </div>
+          <div>
+            <button type="submit" >
+              update author
           </button>
+          
         </div>
       </form>
     </div>

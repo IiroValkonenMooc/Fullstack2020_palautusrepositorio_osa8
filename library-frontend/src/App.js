@@ -20,10 +20,12 @@ const App = () => {
       </div>
 
       <Authors
+        token={token}
         show={page === 'authors'}
       />
 
       <Books
+        token={ token }
         show={page === 'books'}
       />
 
