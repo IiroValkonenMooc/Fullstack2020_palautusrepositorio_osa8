@@ -21,10 +21,11 @@ const server = new ApolloServer({
   resolvers,
   context,
   plugins: [
-    logger
+    // logger
   ],
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl  }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })

@@ -4,6 +4,10 @@ const jwt = require('jsonwebtoken')
 const Author = require('../mongoose/schemas/Author')
 const Book = require('../mongoose/schemas/Book')
 const User = require('../mongoose/schemas/User')
+const { PubSub } = require('apollo-server')
+
+
+const pubsub = new PubSub()
 
 const resolvers = {
   Query: {
@@ -13,9 +17,9 @@ const resolvers = {
 
     allBooks: async (root, args) => {
       if (!args.author&&!args.genre) {
-        return  await Book.find({}).populate('author')
+        return  await Book.find({})
       } else {
-        const found = await Book.find({}).populate('author')
+        const found = await Book.find({})
 
         const filtered = found.filter(book => {
           if (book.author.name === args.author) {
@@ -34,15 +38,29 @@ const resolvers = {
     allAuthors: async () => {
       let authors = await Author.find({ })
 
-      for (let i = 0; i < authors.length; i++) {
-        authors[i].bookCount = await Book.find({ author: authors[i]._id }).countDocuments()
-      }
+      // for (let i = 0; i < authors.length; i++) {
+      //   authors[i].bookCount = await Book.find({ author: authors[i]._id }).countDocuments()
+      // }
 
       return authors
     },
 
     me: (root, args, context) => {
       return context.currentUser
+    }
+  },
+  Book: {
+    author: async (root) => {
+      const foundAuthor = await Author.findById(root.author)
+
+      return foundAuthor
+    }
+  },
+  Author: {
+    bookCount: async (root) => {
+      const booksFound = await Book.find({ author: root._id }).countDocuments({ })
+
+      return booksFound
     }
   },
   Mutation: {
@@ -63,6 +81,8 @@ const resolvers = {
 
           const newBook = new Book({ ...args, author: newAuthor._id })
           console.log('newBook :>> ', newBook)
+          pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
+
           return newBook.save()
         } catch (error) {
           throw new UserInputError(error.message, {
@@ -73,6 +93,7 @@ const resolvers = {
 
       try {
         const newBook = new Book({ ...args, author: foundAuthor._id })
+        pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
         return newBook.save()
       } catch (error) {
         throw new UserInputError(error.message, {
@@ -129,6 +150,12 @@ const resolvers = {
           invalidArgs: args,
         })
       }
+    }
+  },
+
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
     }
   }
 }
