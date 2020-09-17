@@ -17,6 +17,19 @@ const Books = (props) => {
     console.log('books update effect');
     if(data){
       setBooks(data.allBooks)
+
+      let bookGenresUnigue = []
+      for (let i = 0; i < data.allBooks.length; i++) {
+        for (let j = 0; j < data.allBooks[i].genres.length; j++) {
+          console.log('here');
+          if (data.allBooks[i].genres[j]
+            && !bookGenresUnigue.includes(data.allBooks[i].genres[j])) {
+            bookGenresUnigue.push(data.allBooks[i].genres[j])
+          }
+        }
+      }
+      setBookGenres(bookGenresUnigue)
+
       if(me){
         refetchGenre()
       }
@@ -47,29 +60,11 @@ const Books = (props) => {
   }
 
   if (dataBooksInGenre && dataBooksInGenre.allBooks !== booksInGenre) {
-    console.log('update genres');
-    console.log('dataBooksInGenre.allBooks :>> ', dataBooksInGenre.allBooks);
-    console.log('booksInGenre :>> ', booksInGenre);
     setBooksInGenre(dataBooksInGenre.allBooks)
   }
 
   if (!props.show||loading) {
     return null
-  }
-
-  if(data && books!==data.allBooks){
-    setBooks(data.allBooks)
-
-    let bookGenresUnigue = []
-    for (let i = 0; i < books.length; i++) {
-      for (let j = 0; j < books[i].genres.length; j++) {
-        if (books[i].genres[j]
-          && !bookGenresUnigue.includes(books[i].genres[j])) {
-          bookGenresUnigue.push(books[i].genres[j])
-        }
-      }
-    }
-    setBookGenres(bookGenresUnigue)
   }
 
   const showRecommendedForUser = (me) ? true : false
