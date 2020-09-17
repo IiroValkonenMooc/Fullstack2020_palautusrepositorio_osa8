@@ -4,6 +4,7 @@ require('dotenv').config()
 const typeDefs = require('./apollo/typeDefs')
 const resolvers = require('./apollo/resolvers')
 const context = require('./apollo/context')
+const logger = require('./apollo/plugins/logger')
 
 // eslint-disable-next-line no-undef
 mongoose.connect( process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
@@ -18,7 +19,10 @@ mongoose.connect( process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTo
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context
+  context,
+  plugins: [
+    logger
+  ],
 })
 
 server.listen().then(({ url }) => {

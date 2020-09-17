@@ -6,10 +6,10 @@ import { ALL_BOOKS, ME, ALL_BOOKS_IN_GENRE } from '../graphql/queries';
 const Books = (props) => {
   const [books, setBooks] = useState([])
   const [booksInGenre, setBooksInGenre] = useState([])
-  const [me, setMe] = useState([])
+  const [me, setMe] = useState(null)
   const { loading, error, data } = useQuery(ALL_BOOKS)
   const [getMe, { loading: loadingMe, data: dataMe }] = useLazyQuery(ME)
-  const [getBooksInGenre, { loading: loadingBooksInGenre, data: dataBooksInGenre }] = useLazyQuery(ALL_BOOKS_IN_GENRE, { variables: { genre: 'tylsä' }} )
+  const [getBooksInGenre, {loading: loadingGenre , data: dataBooksInGenre }] = useLazyQuery(ALL_BOOKS_IN_GENRE)
   const [bookGenres, setBookGenres] = useState([])
   const [bookGenresFilter, setBookGenresFilter] = useState('all')
 
@@ -20,16 +20,25 @@ const Books = (props) => {
       setMe(null)
       setBooksInGenre(null)
     }
-  }, [props.token])
+  }, [props.token, getMe])
+
+  useEffect( () =>{
+    console.log('did it again :>> ');
+    if(me){
+      setBooksInGenre(null)
+      getBooksInGenre({ variables: { genreToSearch: me.favoriteGenre } })
+    }
+    
+  }, [me, data, getBooksInGenre])
 
   if (!me && dataMe) {
-    const { __typename, ...rest } = dataMe.me
-    setMe(rest)
-    getBooksInGenre()
+    const { __typename, ...restMe } = dataMe.me
+    setMe(restMe)
   }
 
-  if (!booksInGenre && dataBooksInGenre) {
-    console.log(dataBooksInGenre);
+  if (!booksInGenre && dataBooksInGenre && dataBooksInGenre.allBooks !== booksInGenre) {
+    console.log('update genres');
+    setBooksInGenre(dataBooksInGenre.allBooks)
   }
 
   if (!props.show||loading) {
@@ -57,7 +66,7 @@ const Books = (props) => {
     <div>
       <h2>books</h2>
       { showRecommendedForUser 
-        ? <SelectedBooksForUser me={me} books={books}  />
+        ? <SelectedBooksForUser me={me} books={books} booksFiltered={booksInGenre} />
         : null
       }
       {'Filter books'}

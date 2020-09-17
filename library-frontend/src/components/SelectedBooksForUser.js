@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SelectedBooksForUser = ({me, books}) => {
+const SelectedBooksForUser = ({me, books, booksFiltered}) => {
     let stuffToShow = []
 
     for (let i = 0; i < books.length; i++) {
@@ -14,12 +14,27 @@ const SelectedBooksForUser = ({me, books}) => {
         }
     }
 
-    return(
-    <div>
-        <h3>Books selected for you {me.username}</h3>
-        {stuffToShow.map(book => <div key={book.id} >{`${book.title} by ${book.author.name} (${book.published})`}</div>)}
-    </div>
-    )
+    // return(
+    // <div>
+    //     <h3>Books selected for you {me.username}</h3>
+    //     {stuffToShow.map(book => <div key={book.id} >{`${book.title} by ${book.author.name} (${book.published})`}</div>)}
+    // </div>
+    // )
+    
+    if(!booksFiltered){
+        return (
+            <div> {'Loading'} </div>
+        )
+    } else {
+        console.log('booksFiltered :>> ', booksFiltered)
+
+        return(
+            <div>
+                <h3>Books selected for you {me.username}</h3>
+                {booksFiltered.map(book => <div key={book.id} >{`${book.title} by ${book.author.name} (${book.published})`}</div>)}
+            </div>
+        )
+    }
 }
 
 export default SelectedBooksForUser

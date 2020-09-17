@@ -18,7 +18,6 @@ const schema = new mongoose.Schema({
   genres: [
     {
       type: String,
-      minlength: 2
     }
   ]
 })
