@@ -53,7 +53,7 @@ const Login = ({setToken}) => {
     const handleLogout = async () => {
         setToken(null)
         localStorage.clear()
-        client.resetStore()
+        client.clearStore()
         setLoggedIn(false)
     }
 

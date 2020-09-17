@@ -26,8 +26,6 @@ const SelectedBooksForUser = ({me, books, booksFiltered}) => {
             <div> {'Loading'} </div>
         )
     } else {
-        console.log('booksFiltered :>> ', booksFiltered)
-
         return(
             <div>
                 <h3>Books selected for you {me.username}</h3>

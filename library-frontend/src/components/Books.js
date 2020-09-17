@@ -9,35 +9,47 @@ const Books = (props) => {
   const [me, setMe] = useState(null)
   const { loading, error, data } = useQuery(ALL_BOOKS)
   const [getMe, { loading: loadingMe, data: dataMe }] = useLazyQuery(ME)
-  const [getBooksInGenre, {loading: loadingGenre , data: dataBooksInGenre }] = useLazyQuery(ALL_BOOKS_IN_GENRE)
+  const [getBooksInGenre, {loading: loadingGenre , data: dataBooksInGenre, refetch: refetchGenre }] = useLazyQuery(ALL_BOOKS_IN_GENRE)
   const [bookGenres, setBookGenres] = useState([])
   const [bookGenresFilter, setBookGenresFilter] = useState('all')
 
   useEffect( () =>{
+    console.log('books update effect');
+    if(data){
+      setBooks(data.allBooks)
+      if(me){
+        refetchGenre()
+      }
+    }
+  }, [data])
+  
+  useEffect( () =>{
     if(props.token){
       getMe()
     } else {
+      console.log('user set null');
       setMe(null)
-      setBooksInGenre(null)
     }
-  }, [props.token, getMe])
+  }, [props, getMe])
 
   useEffect( () =>{
-    console.log('did it again :>> ');
+    console.log('me update effect');
+    console.log('me :>> ', me);
     if(me){
-      setBooksInGenre(null)
       getBooksInGenre({ variables: { genreToSearch: me.favoriteGenre } })
     }
     
-  }, [me, data, getBooksInGenre])
+  }, [me])
 
-  if (!me && dataMe) {
+  if (props.token && !me && dataMe) {
     const { __typename, ...restMe } = dataMe.me
     setMe(restMe)
   }
 
-  if (!booksInGenre && dataBooksInGenre && dataBooksInGenre.allBooks !== booksInGenre) {
+  if (dataBooksInGenre && dataBooksInGenre.allBooks !== booksInGenre) {
     console.log('update genres');
+    console.log('dataBooksInGenre.allBooks :>> ', dataBooksInGenre.allBooks);
+    console.log('booksInGenre :>> ', booksInGenre);
     setBooksInGenre(dataBooksInGenre.allBooks)
   }
 

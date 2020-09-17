@@ -3,11 +3,11 @@ import { useMutation } from '@apollo/client'
 import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from '../graphql/queries'
 
 const NewBook = (props) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuhtor] = useState('')
-  const [published, setPublished] = useState('')
+  const [title, setTitle] = useState('päiv')
+  const [author, setAuhtor] = useState('Bert')
+  const [published, setPublished] = useState(123)
   const [genre, setGenre] = useState('')
-  const [genres, setGenres] = useState([''])
+  const [genres, setGenres] = useState(['tylsä'])
   
   const [ createBook ] = useMutation(ADD_BOOK, {
     refetchQueries: [ {query: ALL_BOOKS}, {query: ALL_AUTHORS} ]
