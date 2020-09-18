@@ -5,6 +5,7 @@ const Author = require('../mongoose/schemas/Author')
 const Book = require('../mongoose/schemas/Book')
 const User = require('../mongoose/schemas/User')
 const { PubSub } = require('apollo-server')
+const DataLoader = require('dataloader')
 
 
 const pubsub = new PubSub()
@@ -35,12 +36,8 @@ const resolvers = {
       }
     },
 
-    allAuthors: async () => {
+    allAuthors: async (root, args, context, info) => {
       let authors = await Author.find({ })
-
-      // for (let i = 0; i < authors.length; i++) {
-      //   authors[i].bookCount = await Book.find({ author: authors[i]._id }).countDocuments()
-      // }
 
       return authors
     },
@@ -57,11 +54,7 @@ const resolvers = {
     }
   },
   Author: {
-    bookCount: async (root) => {
-      const booksFound = await Book.find({ author: root._id }).countDocuments({ })
-
-      return booksFound
-    }
+    bookCount: (root, args, context) => context.bookCountLoader.load(root._id)
   },
   Mutation: {
 

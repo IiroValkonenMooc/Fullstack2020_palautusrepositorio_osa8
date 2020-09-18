@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
+mongoose.set('debug', true);
+
 const schema = new mongoose.Schema({
   title: {
     type: String,
