@@ -1,17 +1,44 @@
 import React, { useState, useEffect } from 'react'
 import SelectedBooksForUser from './SelectedBooksForUser';
-import { useQuery, useLazyQuery } from '@apollo/client';
-import { ALL_BOOKS, ME, ALL_BOOKS_IN_GENRE } from '../graphql/queries';
+import { useQuery, useLazyQuery, useSubscription, useApolloClient } from '@apollo/client';
+import { ALL_BOOKS, ME, ALL_BOOKS_IN_GENRE, SUB_PERSON_ADDED } from '../graphql/queries';
 
 const Books = (props) => {
   const [books, setBooks] = useState([])
   const [booksInGenre, setBooksInGenre] = useState([])
   const [me, setMe] = useState(null)
-  const { loading, error, data } = useQuery(ALL_BOOKS)
+  const { loading, error, data, refetch } = useQuery(ALL_BOOKS)
   const [getMe, { loading: loadingMe, data: dataMe }] = useLazyQuery(ME)
   const [getBooksInGenre, {loading: loadingGenre , data: dataBooksInGenre, refetch: refetchGenre }] = useLazyQuery(ALL_BOOKS_IN_GENRE)
   const [bookGenres, setBookGenres] = useState([])
   const [bookGenresFilter, setBookGenresFilter] = useState('all')
+  const client = useApolloClient()
+
+  const updateAllBooksCacheIfNew = (inStoreCache, newBook) => {
+    console.log('päivitys funktio');
+    const allBooksInCache = inStoreCache.allBooks
+    const bookAlreadyInCache = allBooksInCache.map(book => book.id).includes(newBook.id)
+
+    if(!bookAlreadyInCache){
+      client.writeQuery({
+        query: ALL_BOOKS,
+        data: { allBooks: [...allBooksInCache, newBook] }
+      })
+      console.log('added new book :>> ', newBook)
+      //setNewStuff(true)
+      window.alert('new book')
+      console.log('dataAllbook :>> ', data);
+    }
+  }
+
+  useSubscription(SUB_PERSON_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log('subscriptiondata :>> ', subscriptionData)
+      const dataInStore = client.readQuery({query: ALL_BOOKS })
+      console.log('dataInStore :>> ', dataInStore)
+      updateAllBooksCacheIfNew(dataInStore, subscriptionData.data.bookAdded)
+    }
+  })
 
   useEffect( () =>{
     console.log('books update effect');
@@ -21,7 +48,6 @@ const Books = (props) => {
       let bookGenresUnigue = []
       for (let i = 0; i < data.allBooks.length; i++) {
         for (let j = 0; j < data.allBooks[i].genres.length; j++) {
-          console.log('here');
           if (data.allBooks[i].genres[j]
             && !bookGenresUnigue.includes(data.allBooks[i].genres[j])) {
             bookGenresUnigue.push(data.allBooks[i].genres[j])
@@ -33,8 +59,14 @@ const Books = (props) => {
       if(me){
         refetchGenre()
       }
+
+      if(props.newStuff){
+        console.log('data.allBooks :>> ', data.allBooks);
+        refetch()
+        props.setNewStuff(false)
+      }
     }
-  }, [data])
+  }, [data, props.newStuff])
   
   useEffect( () =>{
     if(props.token){
@@ -46,8 +78,8 @@ const Books = (props) => {
   }, [props, getMe])
 
   useEffect( () =>{
-    console.log('me update effect');
-    console.log('me :>> ', me);
+    //console.log('me update effect');
+    //console.log('me :>> ', me);
     if(me){
       getBooksInGenre({ variables: { genreToSearch: me.favoriteGenre } })
     }

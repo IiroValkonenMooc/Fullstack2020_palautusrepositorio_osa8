@@ -16,7 +16,7 @@ const Authors = (props) => {
   }
 
   if(data && authors!==data.allAuthors){
-    console.log('data.allAuthors :>> ', data.allAuthors);
+    //console.log('data.allAuthors :>> ', data.allAuthors);
     setAuthors(data.allAuthors)
   }
 
@@ -27,7 +27,7 @@ const Authors = (props) => {
   }
 
   const displayValue = props.token ? '' : 'none'
-  console.log('props.token :>> ', props.token);
+  //console.log('props.token :>> ', props.token);
   
   return (
     <div>

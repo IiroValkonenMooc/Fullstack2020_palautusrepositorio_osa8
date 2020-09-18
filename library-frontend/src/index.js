@@ -9,7 +9,6 @@ import { getMainDefinition } from '@apollo/client/utilities'
 import { setContext } from 'apollo-link-context'
 
 import { WebSocketLink } from '@apollo/client/link/ws'
-import { SubscriptionClient } from 'subscriptions-transport-ws'
 
 const wsLink = new WebSocketLink({
     uri: `ws://localhost:4000/graphql`,
@@ -28,7 +27,9 @@ const authLink = setContext((_, { headers }) => {
     }
 })
 
-const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
+const httpLink = new HttpLink({
+  uri: 'http://localhost:4000/'
+})
 
 const splitLink = split(
     ({ query }) => {
